@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import { errorMiddleware } from "./modules/middleware/error.middleware";
 import { authRouter } from "./modules/auth/auth.routes";
 import { authMiddleware } from "./modules/middleware/auth.middleware";
+import { userRouter } from "./modules/users/users.routes";
 
 const app = express();
 app.use(express.json());
@@ -14,6 +15,7 @@ app.use(cors({ origin: ["http://localhost:3000"], credentials: true }));
 app.use(cookieParser());
 
 app.use("/auth", authRouter);
+app.use("/users", userRouter);
 app.get("/protected", authMiddleware, (req, res, next) => {
   res.status(200).json({ message: "Auth Works" });
 });

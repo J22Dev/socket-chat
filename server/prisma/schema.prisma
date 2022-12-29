@@ -1,0 +1,55 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id          Int       @id @default(autoincrement())
+  firstName   String    @db.VarChar(20)
+  lastName    String    @db.VarChar(20)
+  userName    String    @unique @db.VarChar(20)
+  email       String    @unique @db.VarChar(50)
+  password    String    @db.VarChar(255)
+  dateCreated DateTime  @default(now())
+  dateUpdated DateTime  @default(now())
+  Profile     Profile[]
+  Token       Token[]
+}
+
+model File {
+  id          Int       @id @default(autoincrement())
+  bucket      String    @db.VarChar(100)
+  name        String    @db.VarChar(100)
+  dateCreated DateTime  @default(now())
+  dateUpdated DateTime  @default(now())
+  Profile     Profile[]
+
+  @@unique([bucket, name])
+}
+
+model Profile {
+  id          Int      @id @default(autoincrement())
+  bio         String?  @db.VarChar(200)
+  avatar      File?    @relation(fields: [avatarId], references: [id])
+  avatarId    Int?
+  user        User     @relation(fields: [userId], references: [id])
+  userId      Int
+  dateCreated DateTime @default(now())
+  dateUpdated DateTime @default(now())
+}
+
+model Token {
+  id           Int      @id @default(autoincrement())
+  refreshToken String   @unique @db.VarChar(255)
+  user         User     @relation(fields: [userId], references: [id])
+  dateCreated  DateTime @default(now())
+  dateUpdated  DateTime @default(now())
+  userId       Int      @unique
+}

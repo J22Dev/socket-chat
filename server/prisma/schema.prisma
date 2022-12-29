@@ -21,6 +21,7 @@ model User {
   dateUpdated DateTime  @default(now())
   Profile     Profile[]
   Token       Token[]
+  File        File[]
 }
 
 model File {
@@ -29,7 +30,9 @@ model File {
   name        String    @db.VarChar(100)
   dateCreated DateTime  @default(now())
   dateUpdated DateTime  @default(now())
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
   Profile     Profile[]
+  userId      Int
 
   @@unique([bucket, name])
 }
@@ -39,7 +42,7 @@ model Profile {
   bio         String?  @db.VarChar(200)
   avatar      File?    @relation(fields: [avatarId], references: [id])
   avatarId    Int?
-  user        User     @relation(fields: [userId], references: [id])
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId      Int
   dateCreated DateTime @default(now())
   dateUpdated DateTime @default(now())
@@ -48,7 +51,7 @@ model Profile {
 model Token {
   id           Int      @id @default(autoincrement())
   refreshToken String   @unique @db.VarChar(255)
-  user         User     @relation(fields: [userId], references: [id])
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   dateCreated  DateTime @default(now())
   dateUpdated  DateTime @default(now())
   userId       Int      @unique
